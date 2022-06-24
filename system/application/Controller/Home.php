@@ -18,7 +18,7 @@ class Home
         header("Access-Control-Allow-Headers: *");
         
         $resourceFile = INPHINIT_PUBLIC . $resource;
-        if (file_exists($resourceFile)) {
+        if (is_file($resourceFile)) {
             $pinfo = pathinfo($resourceFile);
             if (in_array($pinfo["extension"], static::NOT_ALLOWED_EXTENSIONS)) {
                 header('X-Proj-Status: DENIED');
