@@ -4,6 +4,13 @@ namespace Controller;
 
 use Inphinit\Viewing\View;
 
+function message_and_die($message)
+{
+    echo "<h1 style='text-align: center;'>Project Principium Content Delivery Network</h1>";
+    echo "<h3 style='text-align: center;'>$message</h3>";
+    die();
+}
+
 class Home
 {
     const NOT_ALLOWED_EXTENSIONS = [
@@ -22,6 +29,10 @@ class Home
 
     public function fetch($resource)
     {
+        if ($resource == "" && $_SERVER["REQUEST_METHOD"] == "GET") {
+            message_and_die("No content to deliver at index");
+        }
+
         header("Cache-Control: max-age=31536000");
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, OPTIONS');
@@ -35,7 +46,7 @@ class Home
             if (in_array($pinfo["extension"], static::NOT_ALLOWED_EXTENSIONS)) {
                 header('X-CDN-Status: NOT-ALLOWED');
                 http_response_code(403);
-                die();
+                message_and_die("403 - Access to this file type is not allowed");
             } else {
                 header('Content-Type: ' . $mimeArray[$pinfo["extension"]]);
                 header('Content-Disposition: inline; filename="' . $pinfo["basename"] . '"');
@@ -45,7 +56,7 @@ class Home
         } else {
             header('X-CDN-Status: NO-HIT');
             http_response_code(404);
-            die();
+            message_and_die("404 - Content not found");
         }
     }
 }
